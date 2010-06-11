@@ -1,62 +1,49 @@
-%% @author author <author@example.com>
-%% @copyright YYYY author.
-
-%% @doc Supervisor for the skel application.
-
+%%%-------------------------------------------------------------------
+%%% File    : skel_sup.erl
+%%% Author  : Author <author@example.com>
+%%% Description : 
+%%%
+%%%-------------------------------------------------------------------
 -module(skel_sup).
--author('author <author@example.com>').
 
 -behaviour(supervisor).
 
-%% External exports
--export([start_link/0, upgrade/0]).
+%% API
+-export([start_link/0]).
 
-%% supervisor callbacks
+%% Supervisor callbacks
 -export([init/1]).
 
-%% @spec start_link() -> ServerRet
-%% @doc API for starting the supervisor.
+-define(SERVER, ?MODULE).
+
+%%====================================================================
+%% API functions
+%%====================================================================
+%%--------------------------------------------------------------------
+%% Function: start_link() -> {ok,Pid} | ignore | {error,Error}
+%% Description: Starts the supervisor
+%%--------------------------------------------------------------------
 start_link() ->
-    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-%% @spec upgrade() -> ok
-%% @doc Add processes if necessary.
-upgrade() ->
-    {ok, {_, Specs}} = init([]),
-
-    Old = sets:from_list(
-            [Name || {Name, _, _, _} <- supervisor:which_children(?MODULE)]),
-    New = sets:from_list([Name || {Name, _, _, _, _, _} <- Specs]),
-    Kill = sets:subtract(Old, New),
-
-    sets:fold(fun (Id, ok) ->
-                      supervisor:terminate_child(?MODULE, Id),
-                      supervisor:delete_child(?MODULE, Id),
-                      ok
-              end, ok, Kill),
-
-    [supervisor:start_child(?MODULE, Spec) || Spec <- Specs],
-    ok.
-
-%% @spec init([]) -> SupervisorTree
-%% @doc supervisor callback.
+%%====================================================================
+%% Supervisor callbacks
+%%====================================================================
+%%--------------------------------------------------------------------
+%% Func: init(Args) -> {ok,  {SupFlags,  [ChildSpec]}} |
+%%                     ignore                          |
+%%                     {error, Reason}
+%% Description: Whenever a supervisor is started using 
+%% supervisor:start_link/[2,3], this function is called by the new process 
+%% to find out about restart strategy, maximum restart frequency and child 
+%% specifications.
+%%--------------------------------------------------------------------
 init([]) ->
-    Ip = case os:getenv("MOCHIWEB_IP") of false -> "0.0.0.0"; Any -> Any end,
-    WebConfig = [
-         {ip, Ip},
-                 {port, 8000},
-                 {docroot, skel_deps:local_path(["priv", "www"])}],
-    Web = {skel_web,
-           {skel_web, start, [WebConfig]},
-           permanent, 5000, worker, dynamic},
+    AChild = {'AName',{'AModule',start_link,[]},
+	      permanent,2000,worker,['AModule']},
+    {ok,{{one_for_all,0,1}, [AChild]}}.
 
-    Processes = [Web],
-    {ok, {{one_for_one, 10, 10}, Processes}}.
+%%====================================================================
+%% Internal functions
+%%====================================================================
 
-
-%%
-%% Tests
-%%
--include_lib("eunit/include/eunit.hrl").
--ifdef(TEST).
--endif.

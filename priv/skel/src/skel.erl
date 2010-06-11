@@ -19,12 +19,9 @@ ensure_started(App) ->
 %% @doc Start the skel server.
 start() ->
     skel_deps:ensure(),
-    ensure_started(crypto),
     application:start(skel).
 
 %% @spec stop() -> ok
 %% @doc Stop the skel server.
 stop() ->
-    Res = application:stop(skel),
-    application:stop(crypto),
-    Res.
+    application:stop(skel).
