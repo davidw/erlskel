@@ -11,7 +11,7 @@
 %% External API
 
 skelcopy(DestDir, Name) ->
-    ok = filelib:ensure_dir(DestDir),
+    ok = ensuredir(DestDir),
     LDst = case length(filename:dirname(DestDir)) of
                1 -> %% handle case when dirname returns "/"
                    0;
@@ -68,7 +68,9 @@ skelcopy(Src, DestDir, Name, LDst) ->
             ok
     end.
 
+
 ensuredir(Dir) ->
+    ok = filelib:ensure_dir(Dir),
     case file:make_dir(Dir) of
         ok ->
             ok;
@@ -77,3 +79,4 @@ ensuredir(Dir) ->
         E ->
             E
     end.
+
