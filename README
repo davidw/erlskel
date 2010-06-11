@@ -4,3 +4,9 @@ erlskel
 This code is an adaptation of the code mochiweb utilizes to create
 skeleton projects.  It's meant to create skeleton Erlang applications,
 with all the directories and Makefiles and things set up properly.
+
+usage
+-----
+
+ ./scripts/otp_application.erl myapp /home/davidw/erlang/
+
