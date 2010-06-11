@@ -11,7 +11,7 @@
 %% External API
 
 skelcopy(DestDir, Name) ->
-    ok = ensuredir(DestDir),
+    ok = filelib:ensure_dir(DestDir),
     LDst = case length(filename:dirname(DestDir)) of
                1 -> %% handle case when dirname returns "/"
                    0;

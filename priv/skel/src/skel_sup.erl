@@ -39,9 +39,10 @@ start_link() ->
 %% specifications.
 %%--------------------------------------------------------------------
 init([]) ->
-    AChild = {'AName',{'AModule',start_link,[]},
-	      permanent,2000,worker,['AModule']},
-    {ok,{{one_for_all,0,1}, [AChild]}}.
+    AChild = {skel_main,
+	      {skel_main, start_link, []},
+	      permanent, 2000, worker, [skel_main]},
+    {ok,{{one_for_all,10,10}, [AChild]}}.
 
 %%====================================================================
 %% Internal functions
